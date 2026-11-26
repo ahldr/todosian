@@ -264,8 +264,12 @@
     <string name="place_pick_on_map">Pick on map</string>
     <string name="place_picker_title">Pick a place</string>
     <string name="place_picker_radius">Radius (m)</string>
-    <string name="place_picker_shortcut_name">Save as shortcut (e.g. home)</string>
-    <string name="place_picker_use">Use</string>
+    <string name="place_picker_shortcut_name">Shortcut name (optional)</string>
+    <string name="place_picker_use">Use this place</string>
+    <string name="place_picker_zoom_in">Zoom in to pick a place</string>
+    <string name="place_picker_search">Search address</string>
+    <string name="place_picker_my_location">My location</string>
+    <string name="place_picker_delete_shortcut">Delete shortcut</string>
     <string name="notification_due_channel_name">Due reminders</string>
     <string name="notification_due_channel_description">Reminds you when tasks are close to their due date.</string>
     <plurals name="notification_due_title">

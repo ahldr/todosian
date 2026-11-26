@@ -100,7 +100,7 @@ Non-todo lines are preserved. The app only edits the specific todo lines you cha
 
 <h2 align="center">Privacy</h2>
 
-Todosian only accesses the folder you pick. There is no account, no analytics, and no network sync built into the app. The network permission is used only to download OpenStreetMap tiles in the place picker. Location reminders use Google Play services geofencing and need location access all the time; your coordinates stay in your notes.
+Todosian only accesses the folder you pick. There is no account, no analytics, and no network sync built into the app. The network permission is used only by the place picker: map tiles come from OpenFreeMap and address search goes to Photon (komoot), both built on OpenStreetMap data and needing no account or key. Location reminders use Google Play services geofencing and need location access all the time; your coordinates stay in your notes.
 
 <h2 align="center">Contributing</h2>
 
