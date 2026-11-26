@@ -37,7 +37,7 @@ Todosian/
 ## Core Architecture Principles
 
 1. **Files are the source of truth**: Todosian reads and writes Markdown files directly. Never introduce any form of database that acts as the primary data store.
-2. **Privacy-first**: No network permissions, no analytics, no telemetry. The app only accesses the folder selected by the user via Storage Access Framework (SAF).
+2. **Privacy-first**: No analytics, no telemetry. The only network use is OpenStreetMap tiles in the place picker; location reminders use Google Play services geofencing. The app only accesses the folder selected by the user via Storage Access Framework (SAF).
 3. **Markdown integrity**: Preserve all non-todo lines exactly as they appear. Only modify the specific todo lines that the user explicitly changes.
 4. **Obsidian compatibility**: Support (but don't require) Obsidian Tasks plugin metadata format.
 

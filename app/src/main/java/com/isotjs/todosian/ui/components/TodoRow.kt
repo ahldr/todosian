@@ -72,6 +72,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.isotjs.todosian.R
+import com.isotjs.todosian.ui.place.PlacePickerDialog
 import com.isotjs.todosian.data.model.TasksPriority
 import com.isotjs.todosian.data.model.Todo
 import com.isotjs.todosian.utils.MarkdownParser
@@ -480,6 +481,30 @@ fun TasksMetaEditor(
             },
             modifier = modifier.fillMaxWidth(),
         )
+
+        var showPicker by remember { mutableStateOf(false) }
+        OutlinedTextField(
+            value = meta.place.orEmpty(),
+            onValueChange = { value -> onMetaChange(meta.copy(place = value.trim().ifBlank { null })) },
+            singleLine = true,
+            label = { Text(text = stringResource(R.string.category_tasks_place_label)) },
+            trailingIcon = {
+                TextButton(onClick = { showPicker = true }) {
+                    Text(text = stringResource(R.string.place_pick_on_map))
+                }
+            },
+            modifier = modifier.fillMaxWidth(),
+        )
+        if (showPicker) {
+            PlacePickerDialog(
+                initialToken = meta.place,
+                onDismiss = { showPicker = false },
+                onPicked = { token ->
+                    onMetaChange(meta.copy(place = token))
+                    showPicker = false
+                },
+            )
+        }
     }
 }
 

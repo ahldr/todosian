@@ -21,7 +21,10 @@ class DueReminderReceiver : BroadcastReceiver() {
                         DueReminderNotifier.checkAndNotify(context)
                         DueReminderScheduler.reschedule(context)
                     }
-                    Intent.ACTION_BOOT_COMPLETED -> DueReminderScheduler.reschedule(context)
+                    Intent.ACTION_BOOT_COMPLETED -> {
+                        DueReminderScheduler.reschedule(context)
+                        PlaceGeofences.sync(context)
+                    }
                 }
             } finally {
                 pendingResult.finish()

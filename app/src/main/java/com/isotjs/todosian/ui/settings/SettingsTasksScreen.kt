@@ -35,6 +35,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material.icons.filled.TaskAlt
@@ -121,6 +122,48 @@ fun SettingsTasksScreen(
                 )
             }
         }
+    }
+
+    val notificationsForLocationLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { appSettingsRepository.setLocationReminders(true) }
+
+    val backgroundLocationLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        if (!granted) {
+            scope.launch {
+                snackbarHostState.showSnackbar(resources.getString(R.string.settings_location_permission_denied))
+            }
+            return@rememberLauncherForActivityResult
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            notificationsForLocationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            appSettingsRepository.setLocationReminders(true)
+        }
+    }
+
+    val fineLocationLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+    ) { result ->
+        if (result[Manifest.permission.ACCESS_FINE_LOCATION] != true) {
+            scope.launch {
+                snackbarHostState.showSnackbar(resources.getString(R.string.settings_location_permission_denied))
+            }
+            return@rememberLauncherForActivityResult
+        }
+        backgroundLocationLauncher.launch(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+    }
+
+    fun setLocationRemindersEnabled(enabled: Boolean) {
+        if (!enabled) {
+            appSettingsRepository.setLocationReminders(false)
+            return
+        }
+        fineLocationLauncher.launch(
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+        )
     }
 
     fun setTasksPluginEnabled(enabled: Boolean) {
@@ -225,6 +268,20 @@ fun SettingsTasksScreen(
                             )
                         }
                     }
+                }
+
+                SettingsSection(
+                    title = stringResource(R.string.settings_location_reminders),
+                    icon = Icons.Filled.LocationOn,
+                    accent = SettingsAccent.TERTIARY,
+                ) {
+                    SettingsSwitchRow(
+                        icon = Icons.Filled.LocationOn,
+                        title = stringResource(R.string.settings_location_reminders),
+                        subtitle = stringResource(R.string.settings_location_reminders_subtitle),
+                        checked = settings.locationReminders,
+                        onCheckedChange = ::setLocationRemindersEnabled,
+                    )
                 }
 
                 if (!settings.enableTasksPluginSupport) {

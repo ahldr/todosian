@@ -32,6 +32,7 @@ It is designed to work with a folder that is synced to your phone (for example v
 - **Create / rename / delete** categories (files).
 - (Optional) Support for **Obsidian Tasks plugin** metadata (dates, priority, recurrence).
 - **Daily Focus** view to see what's due today, overdue, or both.
+- **Location reminders**: add `📍 lat,lon/radius` or `📍 @home` right after a task's text and get notified when you arrive.
 - Editable **due reminders** that fire once per day for tasks due soon.
 - Home screen **widgets**: a todo list with inline toggling and a quick-add widget.
 - Configurable **theme** (System / Light / Dark), Material 3 UI, and **dynamic color** (Android 12+).
@@ -99,7 +100,7 @@ Non-todo lines are preserved. The app only edits the specific todo lines you cha
 
 <h2 align="center">Privacy</h2>
 
-Todosian only accesses the folder you pick. There is no account, no analytics, and no network sync built into the app.
+Todosian only accesses the folder you pick. There is no account, no analytics, and no network sync built into the app. The network permission is used only to download OpenStreetMap tiles in the place picker. Location reminders use Google Play services geofencing and need location access all the time; your coordinates stay in your notes.
 
 <h2 align="center">Contributing</h2>
 

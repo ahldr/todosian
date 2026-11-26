@@ -49,6 +49,8 @@ interface AppSettingsRepository {
     fun setIncludeSubfolders(enabled: Boolean)
 
     fun setReminderTime(hour: Int, minute: Int)
+
+    fun setLocationReminders(enabled: Boolean)
 }
 
 class SharedPrefsAppSettingsRepository(
@@ -169,6 +171,10 @@ class SharedPrefsAppSettingsRepository(
         }
     }
 
+    override fun setLocationReminders(enabled: Boolean) {
+        prefs.edit { putBoolean(KEY_LOCATION_REMINDERS, enabled) }
+    }
+
     private fun readSettings(): AppSettings {
         val themeMode = prefs.getString(KEY_THEME_MODE, null)?.let { raw ->
             runCatching { ThemeMode.valueOf(raw) }.getOrNull()
@@ -221,6 +227,7 @@ class SharedPrefsAppSettingsRepository(
             includeSubfolders = prefs.getBoolean(KEY_INCLUDE_SUBFOLDERS, false),
             reminderTimeHour = prefs.getInt(KEY_REMINDER_TIME_HOUR, 19),
             reminderTimeMinute = prefs.getInt(KEY_REMINDER_TIME_MINUTE, 0),
+            locationReminders = prefs.getBoolean(KEY_LOCATION_REMINDERS, false),
         )
     }
 
@@ -257,5 +264,6 @@ class SharedPrefsAppSettingsRepository(
 
         private const val KEY_REMINDER_TIME_HOUR = "reminder_time_hour"
         private const val KEY_REMINDER_TIME_MINUTE = "reminder_time_minute"
+        private const val KEY_LOCATION_REMINDERS = "location_reminders"
     }
 }
