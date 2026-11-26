@@ -5,7 +5,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.InputChip
@@ -71,30 +76,33 @@ fun PlacePickerDialog(
         onDismissRequest = onDismiss,
         title = { Text(text = stringResource(R.string.place_picker_title)) },
         text = {
-            Column(
-                modifier = Modifier.verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                AndroidView(
-                    factory = {
-                        mapView.overlays.add(
-                            MapEventsOverlay(object : MapEventsReceiver {
-                                override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
-                                    point = p
-                                    showMarker()
-                                    return true
-                                }
-
-                                override fun longPressHelper(p: GeoPoint) = false
-                            }),
-                        )
-                        showMarker()
-                        mapView
-                    },
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(280.dp),
-                )
+                        .height(240.dp)
+                        .clip(RoundedCornerShape(12.dp))
+                        .clipToBounds(),
+                ) {
+                    AndroidView(
+                        factory = {
+                            mapView.overlays.add(
+                                MapEventsOverlay(object : MapEventsReceiver {
+                                    override fun singleTapConfirmedHelper(p: GeoPoint): Boolean {
+                                        point = p
+                                        showMarker()
+                                        return true
+                                    }
+    
+                                    override fun longPressHelper(p: GeoPoint) = false
+                                }),
+                            )
+                            showMarker()
+                            mapView
+                        },
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
                 OutlinedTextField(
                     value = radius,
                     onValueChange = { radius = it.filter(Char::isDigit) },
@@ -109,7 +117,10 @@ fun PlacePickerDialog(
                     label = { Text(text = stringResource(R.string.place_picker_shortcut_name)) },
                     modifier = Modifier.fillMaxWidth(),
                 )
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Row(
+                    modifier = Modifier.horizontalScroll(rememberScrollState()),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     shortcuts.forEach { (name, place) ->
                         InputChip(
                             selected = false,
