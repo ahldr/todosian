@@ -5,6 +5,7 @@
 - **Question:** Can Todosian notify the user when they are near a place linked to a todo?
 - **Codebase state:** branch `ccr-19d2b5bc-1rus53`, identical to `main` at `7a598f0` apart from this document.
 - **Evidence level:** source reading and official documentation, read on 2026-11-26. Nothing was run on a device. Items marked *inferred* are conclusions drawn from source, not observed behavior.
+- **See also:** [the Obsidian plugin side](obsidian-tasks-place-field.md), on how the Tasks plugin fork can read and write the same token.
 
 ## 1. Verdict
 
@@ -170,12 +171,13 @@ Proposal, not tested:
 
 ## 8. Round-trip hazards
 
-Any new token that is not carried through `TasksMeta` will be lost, and a misplaced token can break Obsidian. Four paths matter:
+Any new token that is not carried through `TasksMeta` will be lost, and a misplaced token can break Obsidian. Five paths matter:
 
 1. **Edit with Tasks on.** `MarkdownParser.editTodo` replaces the whole suffix from `meta` (`MarkdownParser.kt:589`). The edit sheets copy each field by hand (`CategoryScreen.kt:637, 700, 761`; `DailyFocusScreen.kt:331`). A location field that is not copied there is deleted on the first text edit.
 2. **Recurrence.** `buildRecurredTaskLine` copies a fixed list of fields (`MarkdownParser.kt:700-708`). A recurring todo would lose its place on the next occurrence.
 3. **Recurrence swallows the tail.** `recurrenceSuffixRegex` captures `(.+?)\s*$` (`MarkdownParser.kt:29-30`). A token written after `🔁` becomes part of the rule. The canonical order in §7.1 avoids this.
 4. **The Tasks plugin reads from the end of the line.** A token at the end of the line hides every Tasks token in front of it from Obsidian (§7.1). The canonical order avoids this too.
+5. **Tasks-plugin-only tokens.** `parseRemainder` peels only done, due, start, scheduled, created, priority and recurrence (`MarkdownParser.kt:934-992`). The Obsidian Tasks plugin also writes `🆔`, `⛔`, `🏁` and `❌`, and it writes them right after the pin. Todosian stops at the first of these, so on those lines it never reaches the pin. It already misses the other tokens on those lines today. See [the plugin note](obsidian-tasks-place-field.md#7-compatibility-across-the-three-programs).
 
 Guard rails: unit tests that round-trip each path, a test that non-todo lines stay byte-for-byte unchanged (the edge-case list in `AGENTS.md`), and a manual check in Obsidian that the Tasks plugin still shows the due date next to a pin.
 
@@ -229,7 +231,7 @@ Likely touch points: `app/src/main/AndroidManifest.xml`, `utils/MarkdownParser.k
 
 ## 12. Questions
 
-Numbering is kept from the first draft. Q19 to Q21 are new.
+Numbering is kept from the first draft. Q19 to Q22 are new.
 
 **Technical**
 
@@ -257,6 +259,7 @@ Numbering is kept from the first draft. Q19 to Q21 are new.
 - **Q15. Cap.** The platform has no cap. Do we set our own (for example the nearest N places), and what does the UI say when it applies?
 - **Q17. Background UX.** The background grant is effectively required for tier 1. Is an explanation screen plus a Settings link acceptable, and does the README need a privacy note?
 - **Q21. Tier decision.** Is a delay of about 30 minutes acceptable for tier 1? If not, tier 0 is the ceiling under the current rules (§1).
+- **Q22. Tasks-only tokens.** Should the parser recognise and preserve `🆔`, `⛔`, `🏁` and `❌` as opaque tokens, so the pin and the tokens before it stay readable on lines that the Obsidian Tasks plugin has edited (§8, item 5)?
 
 ## 13. Audit of the first draft
 
