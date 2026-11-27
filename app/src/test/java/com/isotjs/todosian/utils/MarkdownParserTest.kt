@@ -1634,4 +1634,41 @@ class MarkdownParserTest {
 
         assertEquals(lines, result)
     }
+
+    @Test
+    fun parse_reads_place_before_other_tokens_and_keeps_text() {
+        val todo = MarkdownParser.parse(listOf("- [ ] Buy milk 📍 52.52,13.40/200 🔼 🔁 every week 📅 2026-12-01")).single()
+
+        assertEquals("Buy milk", todo.text)
+        assertEquals("52.52,13.40/200", todo.place)
+        assertEquals("2026-12-01", todo.dueDate)
+        assertEquals("every week", todo.recurrence)
+    }
+
+    @Test
+    fun parse_reads_shortcut_place_and_ignores_plain_text_pin() {
+        assertEquals("@home", MarkdownParser.parse(listOf("- [ ] Water plants 📍 @home")).single().place)
+        val plain = MarkdownParser.parse(listOf("- [ ] Meet at 📍 Berlin")).single()
+        assertEquals(null, plain.place)
+        assertEquals("Meet at 📍 Berlin", plain.text)
+    }
+
+    @Test
+    fun edit_todo_writes_place_first_and_text_edit_preserves_it() {
+        val meta = MarkdownParser.TasksMeta(dueDate = "2026-12-01", place = "@work")
+        val edited = MarkdownParser.editTodo(listOf("- [ ] Report"), 0, "Report", meta, enableTasksPlugin = true)
+        assertEquals("- [ ] Report 📍 @work 📅 2026-12-01", edited[0])
+
+        val renamed = MarkdownParser.editTodoText(edited, 0, "Final report")
+        assertEquals("- [ ] Final report 📍 @work 📅 2026-12-01", renamed[0])
+    }
+
+    @Test
+    fun completing_recurring_todo_keeps_place_on_next_occurrence() {
+        val lines = listOf("- [ ] Water plants 📍 @home 🔁 every week 📅 2026-12-01")
+        val result = MarkdownParser.toggleLine(lines, 0, enableTasksPlugin = true, today = LocalDate.of(2026, 12, 1))
+
+        assertEquals(2, result.size)
+        assertEquals(true, result[0].contains("📍 @home"))
+    }
 }

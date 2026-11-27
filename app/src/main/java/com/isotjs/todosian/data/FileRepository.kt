@@ -28,6 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
+import com.isotjs.todosian.notifications.PlaceGeofences
 import com.isotjs.todosian.ui.widget.WidgetRefresher
 import java.time.LocalDate
 
@@ -491,5 +492,6 @@ class SafFileRepository(
             // Ignore
         }
         scheduleWidgetUpdate()
+        widgetUpdateScope.launch { PlaceGeofences.sync(appContext) }
     }
 }

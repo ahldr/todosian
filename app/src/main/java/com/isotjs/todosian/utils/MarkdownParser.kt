@@ -26,6 +26,9 @@ object MarkdownParser {
     private fun dateSuffixRegex(marker: String) =
         Regex("""\s${Regex.escape(marker)}\s*(\d{4}-\d{2}-\d{2})\s*$""")
 
+    private val placeSuffixRegex =
+        Regex("""\s📍\s*(@[\w-]+|-?\d{1,2}(?:\.\d+)?,-?\d{1,3}(?:\.\d+)?(?:/\d{1,5})?)\s*$""")
+
     private fun recurrenceSuffixRegex(marker: String) =
         Regex("""\s${Regex.escape(marker)}\s*(.+?)\s*$""")
 
@@ -122,6 +125,7 @@ object MarkdownParser {
                 createdDate = parsed.meta.createdDate,
                 priority = parsed.meta.priority,
                 recurrence = parsed.meta.recurrence,
+                place = parsed.meta.place,
             )
         }
     }
@@ -705,6 +709,7 @@ object MarkdownParser {
             createdDate = if (originalMeta.createdDate != null) today.toString() else null,
             priority = originalMeta.priority,
             recurrence = originalMeta.recurrence,
+            place = originalMeta.place,
         )
 
         return buildString {
@@ -889,9 +894,11 @@ object MarkdownParser {
         val createdDate: String? = null,
         val priority: TasksPriority? = null,
         val recurrence: String? = null,
+        val place: String? = null,
     ) {
         fun toSuffixString(markers: TaskMarkers = TaskMarkers.Default): String {
-            val parts = ArrayList<String>(8)
+            val parts = ArrayList<String>(9)
+            if (place != null) parts.add("📍 $place")
             if (createdDate != null) parts.add("${markers.created} $createdDate")
             if (startDate != null) parts.add("${markers.start} $startDate")
             if (scheduledDate != null) parts.add("${markers.scheduled} $scheduledDate")
@@ -930,6 +937,7 @@ object MarkdownParser {
         var createdDate: String? = null
         var priority: TasksPriority? = null
         var recurrence: String? = null
+        var place: String? = null
 
         while (true) {
             val completion = completionRegex.find(working)
@@ -980,6 +988,14 @@ object MarkdownParser {
                 continue
             }
 
+            val placeMatch = placeSuffixRegex.find(working)
+            if (placeMatch != null) {
+                place = placeMatch.groupValues[1]
+                suffixParts.add(0, working.substring(placeMatch.range.first))
+                working = working.substring(0, placeMatch.range.first).trimEnd()
+                continue
+            }
+
             val recur = recurrenceRegex.find(working)
             if (recur != null) {
                 recurrence = recur.groupValues[1].trim()
@@ -1002,6 +1018,7 @@ object MarkdownParser {
                 createdDate = createdDate,
                 priority = priority,
                 recurrence = recurrence,
+                place = place,
             ),
         )
     }

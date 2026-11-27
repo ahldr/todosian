@@ -27,6 +27,7 @@ data class AppSettings(
     val includeSubfolders: Boolean = false,
     val reminderTimeHour: Int = 19,
     val reminderTimeMinute: Int = 0,
+    val locationReminders: Boolean = false,
 ) {
     /** Resolves the configured markers, falling back to the emoji default when a field is blank. */
     fun toTaskMarkers(): TaskMarkers = TaskMarkers(

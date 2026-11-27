@@ -255,6 +255,21 @@
     <string name="action_ok">OK</string>
 
     <!-- Notifications -->
+    <string name="notification_place_channel_name">Location reminders</string>
+    <string name="notification_place_title">You are near a task</string>
+    <string name="settings_location_reminders">Location reminders</string>
+    <string name="settings_location_reminders_subtitle">Notify when you arrive at a task\'s place. Needs location access all the time and may be delayed.</string>
+    <string name="settings_location_permission_denied">Location permission is required for location reminders.</string>
+    <string name="category_tasks_place_label">Place (lat,lon or @shortcut)</string>
+    <string name="place_pick_on_map">Pick on map</string>
+    <string name="place_picker_title">Pick a place</string>
+    <string name="place_picker_radius">Radius (m)</string>
+    <string name="place_picker_shortcut_name">Shortcut name (optional)</string>
+    <string name="place_picker_use">Use this place</string>
+    <string name="place_picker_zoom_in">Zoom in to pick a place</string>
+    <string name="place_picker_search">Search address</string>
+    <string name="place_picker_my_location">My location</string>
+    <string name="place_picker_delete_shortcut">Delete shortcut</string>
     <string name="notification_due_channel_name">Due reminders</string>
     <string name="notification_due_channel_description">Reminds you when tasks are close to their due date.</string>
     <plurals name="notification_due_title">
